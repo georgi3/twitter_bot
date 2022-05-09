@@ -8,3 +8,4 @@ ACCESS_TOKEN_SECRET = os.environ['GAMECAP_ACCESS_TOKEN_SECRET']
 EXCEPTIONS = ['worldofwomennft', 'NFTCompanyy', 'cyphernormie', 'XtrangeArtist', 'EmotionalLadies',
              'QueenRusskiy', 'CleverGlitch', 'Elonmusk', 'cryptodaily', 'opensea', 'etheretro', 'Zeneca_33']
 SCREEN_NAME = 'gamecapNFT'
+
