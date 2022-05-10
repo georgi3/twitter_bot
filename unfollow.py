@@ -1,4 +1,5 @@
-from config import API_KEY, API_SECRET_KEY, BEARER_TOKEN, ACCESS_TOKEN, ACCESS_TOKEN_SECRET, EXCEPTIONS, SCREEN_NAME
+from config import API_KEY, API_SECRET_KEY, ACCESS_TOKEN, ACCESS_TOKEN_SECRET
+from local_settings import EXCEPTIONS, SCREEN_NAME
 import tweepy
 import time
 
