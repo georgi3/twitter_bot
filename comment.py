@@ -89,6 +89,7 @@ def comment(api, tweet_id):
     try:
         api.update_status(status=reply, in_reply_to_status_id=tweet_id, auto_populate_reply_metadata=True)
     except tweepy.TweepyException as err:
+        print(f'Tried to comment "{reply}"')
         print(f'Error occurred: {err}')
         return False
     return reply
@@ -137,6 +138,7 @@ def main(save_json=False):
     i = 0
 
     for target_id in targets:
+        i += 1
         if target_id in commented_on.keys():
             print('Already commented under this tweet, skipping it...')
             continue
@@ -147,8 +149,7 @@ def main(save_json=False):
             time.sleep(600)
             continue
         commented_on[target_id] = reply
-        print(f'Comment "{reply}" under {target_id}, sleeping for {sleep_time}...')
-        i += 1
+        print(f'Comment "{reply}" under {target_id}. \nComment {0}/{len(targets)}, sleeping for {sleep_time}...')
         time.sleep(sleep_time)
         if i == 390:
             print(f'Commented {i} times, aborting not to get suspended')
