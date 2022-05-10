@@ -115,6 +115,14 @@ def ceil(a, b=300):
     return -1 * (-a // b)
 
 
+def save_dict(dict_):
+    if not os.path.isdir('./meta'):
+        os.mkdir('./meta')
+    with open('./meta/commented_on.json', 'w') as fp:
+        json.dump(dict_, fp)
+        print('File saved.')
+
+
 def main(save_json=False):
     api = connect()
     if not connection_verified(api):
@@ -124,10 +132,15 @@ def main(save_json=False):
     n_300_tweets = ceil(len(targets))
     seconds = 60 * 60 * 3
     sleep_time = (seconds * n_300_tweets) / len(targets)
-    print(f'Commenting {len(targets)} over the span of {(seconds * n_300_tweets)/60} hours. Approximated sleep time is {sleep_time}')
+    print(f'Commenting {len(targets)} over the span of {(seconds * n_300_tweets)/60/60} hours. Approximated sleep time'
+          f' is {sleep_time}')
     i = 0
 
     for target_id in targets:
+        if target_id in commented_on.keys():
+            print('Already commented under this tweet, skipping it...')
+            continue
+
         reply = comment(api, target_id)
         if not reply:
             print('Sleeping for 10 min...')
@@ -142,11 +155,8 @@ def main(save_json=False):
             return commented_on
 
     if save_json:
-        if not os.path.isdir('./meta'):
-            os.mkdir('./meta')
-        with open('./meta/commented_on.json', 'w') as fp:
-            json.dump(commented_on, fp)
-            print('File saved.')
+        save_dict(commented_on)
+
     return commented_on
 
 
