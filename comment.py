@@ -146,11 +146,11 @@ def main(save_json=False):
         reply = comment(api, target_id)
         if not reply:
             print('Sleeping for 10 min...')
-            time.sleep(600)
+            time.sleep(60*10)
             continue
         commented_on[target_id] = reply
-        print(f'Comment "{reply}" under {target_id}. \nComment {0}/{len(targets)}, sleeping for {sleep_time}...')
-        time.sleep(sleep_time)
+        print(f'Comment "{reply}" under {target_id}. \nComment {i}/{len(targets)}, sleeping for {int(sleep_time)}s...')
+        time.sleep(int(sleep_time))
         if i == 390:
             print(f'Commented {i} times, aborting not to get suspended')
             return commented_on
