@@ -5,10 +5,13 @@ import time
 import datetime
 import random
 import calendar
+import json
+import os
 
 # Requests / 3-hour window	300* per user; 300* per app
 # https://developer.twitter.com/en/docs/twitter-api/v1/tweets/post-and-engage/api-reference/post-statuses-update
 # https://developer.twitter.com/en/docs/twitter-api/tweets/filtered-stream/api-reference/get-tweets-search-stream-rules
+# TODO add annotation
 
 
 def connect():
@@ -80,7 +83,7 @@ def is_target(tweet):
         return False
 
 
-#TODO add picture
+# TODO add picture
 def comment(api, tweet_id):
     reply = random.choice(COMMENT_POOL)
     api.update_status(status=reply, in_reply_to_status_id=tweet_id , auto_populate_reply_metadata=True)
@@ -108,7 +111,7 @@ def ceil(a, b=300):
     return -1 * (-a // b)
 
 
-def main():
+def main(save_json=False):
     api = connect()
     if not connection_verified(api):
         return False
@@ -119,6 +122,7 @@ def main():
     sleep_time = (seconds * n_300_tweets) / len(targets)
     print(f'Commenting {len(targets)} over the span of {(seconds * n_300_tweets)/60} hours. Approximated sleep time is {sleep_time}')
     i = 0
+    
     for target_id in targets:
         reply = comment(api, target_id)
         commented_on[target_id] = reply
@@ -127,7 +131,16 @@ def main():
         time.sleep(sleep_time)
         if i == 390:
             print(f'Commented {i} times, aborting not to get suspended')
+
+    if save_json:
+        if not os.path.isdir('./meta'):
+            os.mkdir('./meta')
+        with open('./meta/commented_on.json', 'w') as fp:
+            json.dump(commented_on, fp)
+            print('File saved.')
     return commented_on
 
 
-# commented_on = main()
+commented_on = main()
+
+
