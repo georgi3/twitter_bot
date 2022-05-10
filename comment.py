@@ -83,18 +83,6 @@ def is_target(tweet):
         return False
 
 
-# TODO add picture
-def comment(api, tweet_id):
-    reply = random.choice(COMMENT_POOL)
-    try:
-        api.update_status(status=reply, in_reply_to_status_id=tweet_id, auto_populate_reply_metadata=True)
-    except tweepy.TweepyException as err:
-        print(f'Tried to comment "{reply}"')
-        print(f'Error occurred: {err}')
-        return False
-    return reply
-
-
 def get_targets(api):
     ids = get_ids(TARGET_AUDIENCE, api)
     timelines = [get_timeline(user_id=id_, api=api) for id_ in ids]
@@ -110,6 +98,18 @@ def get_targets(api):
                 continue
     print(f'Found {len(targets)}/{total_n_targets} targets.')
     return targets
+
+
+# TODO add picture
+def comment(api, tweet_id):
+    reply = random.choice(COMMENT_POOL)
+    try:
+        api.update_status(status=reply, in_reply_to_status_id=tweet_id, auto_populate_reply_metadata=True)
+    except tweepy.TweepyException as err:
+        print(f'Tried to comment "{reply}"')
+        print(f'Error occurred: {err}')
+        return False
+    return reply
 
 
 def ceil(a, b=300):
