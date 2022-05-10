@@ -86,7 +86,11 @@ def is_target(tweet):
 # TODO add picture
 def comment(api, tweet_id):
     reply = random.choice(COMMENT_POOL)
-    api.update_status(status=reply, in_reply_to_status_id=tweet_id , auto_populate_reply_metadata=True)
+    try:
+        api.update_status(status=reply, in_reply_to_status_id=tweet_id, auto_populate_reply_metadata=True)
+    except tweepy.TweepyException as err:
+        print(f'Error occurred: {err}')
+        return False
     return reply
 
 
@@ -122,15 +126,20 @@ def main(save_json=False):
     sleep_time = (seconds * n_300_tweets) / len(targets)
     print(f'Commenting {len(targets)} over the span of {(seconds * n_300_tweets)/60} hours. Approximated sleep time is {sleep_time}')
     i = 0
-    
+
     for target_id in targets:
         reply = comment(api, target_id)
+        if not reply:
+            print('Sleeping for 10 min...')
+            time.sleep(600)
+            continue
         commented_on[target_id] = reply
         print(f'Comment "{reply}" under {target_id}, sleeping for {sleep_time}...')
         i += 1
         time.sleep(sleep_time)
         if i == 390:
             print(f'Commented {i} times, aborting not to get suspended')
+            return commented_on
 
     if save_json:
         if not os.path.isdir('./meta'):
