@@ -11,7 +11,7 @@ import os
 # Requests / 3-hour window	300* per user; 300* per app
 # https://developer.twitter.com/en/docs/twitter-api/v1/tweets/post-and-engage/api-reference/post-statuses-update
 # https://developer.twitter.com/en/docs/twitter-api/tweets/filtered-stream/api-reference/get-tweets-search-stream-rules
-# TODO add annotation
+# TODO add annotation; add randomness when picking target; filename auto increment
 
 
 def connect():
