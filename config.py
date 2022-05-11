@@ -12,4 +12,8 @@ TARGET_WORDS = []
 EXCEPTIONS = []
 # your twitter handle
 SCREEN_NAME = ''
+# possible comments that you would like to post
+COMMENT_POOL = []
+# possible images that you would like to be posted along the comment
+MEDIA = []
 
