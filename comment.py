@@ -1,5 +1,5 @@
 from config import API_KEY, API_SECRET_KEY, BEARER_TOKEN, ACCESS_TOKEN, ACCESS_TOKEN_SECRET
-from local_settings import SCREEN_NAME, TARGET_WORDS, TARGET_AUDIENCE, COMMENT_POOL
+from local_settings import SCREEN_NAME, TARGET_WORDS, TARGET_AUDIENCE, COMMENT_POOL, MEDIA
 import tweepy
 import time
 import datetime
@@ -102,9 +102,12 @@ def get_targets(api):
 
 # TODO add picture
 def comment(api, tweet_id):
+    image_path = random.choice(MEDIA)
     reply = random.choice(COMMENT_POOL)
     try:
-        api.update_status(status=reply, in_reply_to_status_id=tweet_id, auto_populate_reply_metadata=True)
+        media_reply = api.simple_upload(filename=image_path)
+        api.update_status(status=reply, media_ids=[media_reply.media_id],
+                          in_reply_to_status_id=tweet_id, auto_populate_reply_metadata=True)
     except tweepy.TweepyException as err:
         print(f'Tried to comment "{reply}"')
         print(f'Error occurred: {err}')
@@ -116,18 +119,32 @@ def ceil(a, b=300):
     return -1 * (-a // b)
 
 
-def save_dict(dict_):
+def save_dict(dict_, fname):
+    name = 'commented_on' + f'{fname}.json'
     if not os.path.isdir('./meta'):
         os.mkdir('./meta')
-    with open('./meta/commented_on.json', 'w') as fp:
+    with open(f'./meta/{name}', 'w') as fp:
         json.dump(dict_, fp)
         print('File saved.')
 
 
-def main(save_json=False):
+def get_prev_commented_on():
+    tweet_ids = set()
+    json_files = os.listdir('./meta/')
+    for file in json_files:
+        file_path = './meta/' + file
+        with open(file_path, 'r') as f:
+            file_d = json.load(f)
+        tweet_ids.update(file_d.keys())
+    return tweet_ids
+
+
+# TODO add auto file name increment
+def main(save_json=False, file_n='1'):
     api = connect()
     if not connection_verified(api):
         return False
+    prev_commented_on = get_prev_commented_on()
     commented_on = {}
     targets = get_targets(api)
     n_300_tweets = ceil(len(targets))
@@ -139,7 +156,7 @@ def main(save_json=False):
 
     for target_id in targets:
         i += 1
-        if target_id in commented_on.keys():
+        if target_id in prev_commented_on or target_id in commented_on:
             print('Already commented under this tweet, skipping it...')
             continue
 
@@ -156,11 +173,11 @@ def main(save_json=False):
             return commented_on
 
     if save_json:
-        save_dict(commented_on)
+        save_dict(commented_on, fname=file_n)
 
     return commented_on
 
 
-commented_on = main()
+commented_on = main(save_json=True, file_n='1')
 
 
