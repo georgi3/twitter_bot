@@ -12,6 +12,7 @@ import os
 # https://developer.twitter.com/en/docs/twitter-api/v1/tweets/post-and-engage/api-reference/post-statuses-update
 # https://developer.twitter.com/en/docs/twitter-api/tweets/filtered-stream/api-reference/get-tweets-search-stream-rules
 # TODO add annotation; add randomness when picking target; filename auto increment
+# try changing approach, monitor new posts aka reply to a post as soon as it was posted
 
 
 def connect():
@@ -100,7 +101,6 @@ def get_targets(api):
     return targets
 
 
-# TODO add picture
 def comment(api, tweet_id):
     image_path = random.choice(MEDIA)
     reply = random.choice(COMMENT_POOL)
